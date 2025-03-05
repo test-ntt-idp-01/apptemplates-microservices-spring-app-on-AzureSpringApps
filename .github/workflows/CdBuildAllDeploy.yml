@@ -14,7 +14,7 @@ env:
   PROJECT_NAME: 'spcm032'
   AZURE_RESOURCE_GROUP_NAME: 'spcm032-rg'
   AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-  AZURE_LOCATION: 'westus'
+  AZURE_LOCATION: 'eastus2'
 
   ASC_PACKAGE_PATH: ${{ github.workspace }}
 
@@ -35,20 +35,20 @@ env:
   CONSUMER_SERVICE_JAR: spring-petclinic-consumer/target/spring-petclinic-consumer-2.5.1.jar  
 
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }} 
-  AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CREDENTIALS02 }}
+  AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CREDENTIALS }}
   AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }} 
   KEYVAULT_URI: https://spcm032-keyvault.vault.azure.net/  
 
   AZURE_CRED: ${{ secrets.AZURE_CREDENTIALS01 }}
-  
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-
       - name: Checkout GitHub Actions 
         uses: actions/checkout@v2
         with:
@@ -62,9 +62,12 @@ jobs:
           cache: maven
           
       - name: Login via Azure CLI
-        uses: azure/login@v1.1
+        uses: azure/login@v1
         with:
-          creds: ${{ env.AZURE_CRED }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          federated-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run script file
         run: |

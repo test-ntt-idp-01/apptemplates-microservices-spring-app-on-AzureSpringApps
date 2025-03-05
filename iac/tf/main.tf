@@ -29,18 +29,18 @@ resource "random_password" "default" {
 }
 
 # Base Resource group
-module "base_rg" {
-  source    = "./modules/rg"
-  base_name = local.base_name
-  location  = var.location
-  tags      = var.tags
-}
+#module "base_rg" {
+#  source    = "./modules/rg"
+#  base_name = local.base_name
+#  location  = var.location
+#  tags      = var.tags
+#}
 
 # VNet
 module "vnet" {
   source                            = "./modules/network"
   base_name                         = local.base_name
-  resource_group                    = module.base_rg.rg
+  resource_group                    = "pe-bcp-idp-port-io"#module.base_rg.rg
   vnet_address_space                = var.vnet_address_space
   app_subnet_address_space          = var.app_subnet_address_space
   service_subnet_address_space      = var.service_subnet_address_space
@@ -52,7 +52,7 @@ module "vnet" {
 module "monitor" {
   source         = "./modules/monitor"
   base_name      = local.base_name
-  resource_group = module.base_rg.rg
+  resource_group = "pe-bcp-idp-port-io"#module.base_rg.rg
   tags           = var.tags
 }
 
@@ -60,7 +60,7 @@ module "monitor" {
 module "mysql" {
   source                      = "./modules/mysql"
   base_name                   = local.base_name
-  resource_group              = module.base_rg.rg
+  resource_group              = "pe-bcp-idp-port-io"#module.base_rg.rg
   time_zone_offset            = var.time_zone_offset
   mysql_server_admin_name     = var.mysql_server_admin_name
   mysql_server_admin_password = local.db_password
@@ -72,7 +72,7 @@ module "mysql" {
 module "springcloud" {
   source                         = "./modules/springcloud"
   base_name                      = local.base_name
-  resource_group                 = module.base_rg.rg
+  resource_group                 = "pe-bcp-idp-port-io"#module.base_rg.rg
   app_subnet                     = module.vnet.app_subnet
   service_subnet                 = module.vnet.service_subnet
   spring_cloud_reserved_ip_range = var.spring_cloud_reserved_ip_range
